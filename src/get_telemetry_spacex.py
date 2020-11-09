@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
+
+import time
+import json
+import argparse
+import os.path
+from math import fabs
+from collections import OrderedDict
+
+import cv2
+
 from SpaceXtract import general_extract
 from SpaceXtract import extract_video
 from SpaceXtract.util import Util, rtnd, to_float
-import json
-from math import fabs
-from collections import OrderedDict
-import argparse
-import os.path
 
-import cv2
 
 
 
@@ -68,7 +72,7 @@ def decimal_point_conversion(digit_pos_list):
 
 
 
-def get_data(cap, file, t0, out, name, live):
+def get_data(cap, file, t0, out, name, live, verbose=False, maxframes=None):
     dt = 1 / cap.get(cv2.CAP_PROP_FPS)
 
     cur_time = 0
@@ -112,6 +116,9 @@ def get_data(cap, file, t0, out, name, live):
         prev_vel = v0/KMH
         prev_altitude = a0
         cur_time = rtnd(t0, 3)
+
+    # Calculate processing time
+    proc_t0 = time.time()
 
     while frame is not None:
         _, velocity = session.extract_number(frame, 'velocity', decimal_point_conversion)
@@ -174,6 +181,14 @@ def get_data(cap, file, t0, out, name, live):
 
         frame_index += 1
 
+        if verbose and frame_index % (30*5) == 0:
+            # Show framerate status
+            proc_fps = frame_index / (time.time() - proc_t0)
+            print("frame={:d} {:0.1f} fps".format(frame_index, proc_fps))
+
+        if maxframes is not None and frame_index >= maxframes:
+            break
+
     cv2.destroyAllWindows()
     time_file.close()
 
@@ -196,6 +211,11 @@ def set_args():
                         help='Force overwriting of output file')
     parser.add_argument('-l', action='store_true', dest='live',
                         help='Is the source live')
+
+    parser.add_argument('--maxframes', type=int, help='Maximum number of frames to process')
+
+    parser.add_argument('-v', '--verbose',  action='store_true',
+                        help='Verbose status output')
 
     args = parser.parse_args()
 
@@ -226,7 +246,8 @@ def main():
         print("Cannot access video in file. Please make sure the path to the file is valid")
         exit(3)
 
-    get_data(cap, file, to_float(args.launch_time), args.out, args.destination_path, args.live)
+    get_data(cap, file, to_float(args.launch_time), args.out, args.destination_path,
+             args.live, args.verbose, args.maxframes)
 
 
 if __name__ == '__main__':
