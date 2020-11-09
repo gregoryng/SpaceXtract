@@ -184,13 +184,13 @@ def set_args():
     parser.add_argument('-d', '--destination', action='store', dest='destination_path',
                         help='Path to the file that will contain the output')
     parser.add_argument('-T', '--time', action='store', dest='launch_time', default=0.0,
-                        help="Time from launch of the video to the time of the launch (in seconds).\n"
+                        help="Time from beginning of the video to the time of the launch (in seconds).\n"
                              "If not given and not live, the capture is set to the launch.\n"
                              "If live, the capture isn't be affected")
     parser.add_argument('-o', action='store_true', dest='out',
                         help='If given results will be printed to stdout')
     parser.add_argument('-f', action='store_true', dest='force',
-                        help='Force override of output file')
+                        help='Force overwriting of output file')
     parser.add_argument('-l', action='store_true', dest='live',
                         help='Is the source live')
     parser.add_argument('-s', action='store_true', dest='from_launch',
