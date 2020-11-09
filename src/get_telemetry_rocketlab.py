@@ -210,7 +210,7 @@ def main():
     dest = args.destination_path + '.json'
 
     if os.path.isfile(dest) and not args.force:
-        if input("'%s' already exists. Do you want to override it? [y/n]: " % args.destination_path) != 'y':
+        if input("'%s' already exists. Do you want to overwrite it? [y/n]: " % args.destination_path) != 'y':
             print('exiting')
             exit(4)
 
