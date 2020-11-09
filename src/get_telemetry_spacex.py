@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from SpaceXtract import general_extract
 from SpaceXtract import extract_video
 from SpaceXtract.util import Util, rtnd, to_float
@@ -124,7 +125,10 @@ def get_data(cap, file, t0, out, name, live):
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
 
-        cur_stage = session.get_template_index(frame, 'stage') + 1
+        try:
+            cur_stage = session.get_template_index(frame, 'stage') + 1
+        except TypeError:
+            cur_stage = 0
         
         if velocity is not None and altitude is not None and \
                 (check_data(prev_vel, prev_time, velocity/KMH, cur_time, prev_altitude, altitude)

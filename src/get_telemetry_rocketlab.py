@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from SpaceXtract import general_extract
 from SpaceXtract import extract_video
 from SpaceXtract.util import Util, rtnd, to_float
